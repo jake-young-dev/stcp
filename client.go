@@ -2,7 +2,6 @@ package stcp
 
 import (
 	"net"
-	"time"
 )
 
 /*
@@ -20,13 +19,13 @@ type IClient interface {
 }
 
 // creates a new tcp client to addr using timeout value as a read/write timeout
-func NewTCPClient(addr string, timeout time.Time) (*Client, error) {
+// func NewTCPClient(addr string, timeout time.Time) (*Client, error) {
+func NewTCPClient(addr string) (*Client, error) {
 	//setup connection
 	conn, err := net.Dial("tcp", addr)
 	if err != nil {
 		return nil, err
 	}
-	conn.SetDeadline(timeout)
 
 	return &Client{
 		connection: conn,
