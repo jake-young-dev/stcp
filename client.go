@@ -1,6 +1,7 @@
 package stcp
 
 import (
+	"crypto/tls"
 	"net"
 )
 
@@ -22,7 +23,7 @@ type IClient interface {
 // func NewTCPClient(addr string, timeout time.Time) (*Client, error) {
 func NewTCPClient(addr string) (*Client, error) {
 	//setup connection
-	conn, err := net.Dial("tcp", addr)
+	conn, err := tls.Dial("tcp", addr, &tls.Config{})
 	if err != nil {
 		return nil, err
 	}
