@@ -23,7 +23,7 @@ type IClient interface {
 // func NewTCPClient(addr string, timeout time.Time) (*Client, error) {
 func NewTCPClient(addr string) (*Client, error) {
 	//setup connection
-	conn, err := tls.Dial("tcp", addr, &tls.Config{})
+	conn, err := tls.Dial("tcp", addr, &tls.Config{InsecureSkipVerify: true})
 	if err != nil {
 		return nil, err
 	}
