@@ -23,22 +23,11 @@ type IClient interface {
 
 // creates a new tcp client to addr using the certificates supplied. Connection is made with
 // a defaulted timeout of 5 seconds
-func NewTCPClient(addr, certPath, keyPath string) (*Client, error) {
-	//load certs
-	cert, err := tls.LoadX509KeyPair(certPath, keyPath)
-	if err != nil {
-		return nil, err
-	}
-	cfg := &tls.Config{
-		Certificates: []tls.Certificate{cert},
-	}
-
+func NewTCPClient(addr string) (*Client, error) {
 	//setup connection
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
-	dlr := tls.Dialer{
-		Config: cfg,
-	}
+	dlr := tls.Dialer{}
 	conn, err := dlr.DialContext(ctx, "tcp", addr)
 	if err != nil {
 		return nil, err
