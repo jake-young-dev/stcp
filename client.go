@@ -1,8 +1,10 @@
 package stcp
 
 import (
+	"context"
 	"crypto/tls"
 	"net"
+	"time"
 )
 
 /*
@@ -19,11 +21,25 @@ type IClient interface {
 	Close() error
 }
 
-// creates a new tcp client to addr using timeout value as a read/write timeout
-// func NewTCPClient(addr string, timeout time.Time) (*Client, error) {
-func NewTCPClient(addr string) (*Client, error) {
+// creates a new tcp client to addr using the certificates supplied. Connection is made with
+// a defaulted timeout of 5 seconds
+func NewTCPClient(addr, certPath, keyPath string) (*Client, error) {
+	//load certs
+	cert, err := tls.LoadX509KeyPair(certPath, keyPath)
+	if err != nil {
+		return nil, err
+	}
+	cfg := &tls.Config{
+		Certificates: []tls.Certificate{cert},
+	}
+
 	//setup connection
-	conn, err := tls.Dial("tcp", addr, &tls.Config{InsecureSkipVerify: true})
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+	dlr := tls.Dialer{
+		Config: cfg,
+	}
+	conn, err := dlr.DialContext(ctx, "tcp", addr)
 	if err != nil {
 		return nil, err
 	}
